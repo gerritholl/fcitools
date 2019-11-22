@@ -50,6 +50,8 @@ def parse_cmdline():
     return get_parser().parse_args()
 
 def main():
+    from satpy.utils import debug_on
+    debug_on()
     p = parse_cmdline()
     fn = vis.unpack_and_show_testdata(
             p.path,

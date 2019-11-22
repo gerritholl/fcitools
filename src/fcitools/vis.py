@@ -118,7 +118,7 @@ def show_testdata_from_dir(
         for dn in composites + channels:
             fn = pathlib.Path(d_out) / fn_out.format(
                     area=nm, dataset=dn)
-            sc.save_dataset(
+            ls.save_dataset(
                     dn,
                     filename=str(fn),
                     overlay=overlay)

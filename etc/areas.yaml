@@ -1,0 +1,90 @@
+crete:
+  description: Crete and nearby islands
+  projection:
+    proj: eqc
+    ellps: WGS84
+    units: m
+  shape:
+    width: 731
+    height: 293
+  area_extent:
+    lower_left_xy: [2584716.7894244194, 3854960.1286649713]
+    upper_right_xy: [2950317.3753619194, 4001444.5036649713]
+
+gavdos:
+  description: Gavdos and Gavdopoula
+  projection:
+    proj: eqc
+    ellps: WGS84
+    units: m
+  shape:
+    width: 388
+    height: 336
+  area_extent:
+    lower_left_xy: [2661041.2588343024, 3864283.245056868]
+    upper_right_xy: [2699859.6172779803, 3897855.1235049968]
+
+socotra:
+  description: Socotra archipelago
+  projection:
+    proj: eqc
+    ellps: WGS84
+    units: m
+  shape:
+    width: 652
+    height: 237
+  area_extent:
+    lower_left_xy: [5770141.594111919, 1323832.1989774706]
+    upper_right_xy: [6096069.328486919, 1442240.4021024706]
+
+bornholm:
+  description: Bornholm and Christiansø
+  projection:
+    proj: eqc
+    ellps: WGS84
+    units: m
+  shape:
+    width: 607
+    height: 406
+  area_extent:
+    lower_left_xy: [1634490.9649342299, 6120295.2079474935]
+    upper_right_xy: [1695220.9454029799, 6160883.586853743]
+
+tenerifegomera:
+  description: Tenerife and La Gomera
+  projection:
+    proj: eqc
+    ellps: WGS84
+    units: m
+  shape:
+    width: 1392
+    height: 708
+  area_extent:
+    lower_left_xy: [-1932434.0857565403, 3113087.974488735]
+    upper_right_xy: [-1793273.9295065403, 3183888.755738735]
+
+ileeuropa:
+  description: Île Europa
+  projection:
+    proj: eqc
+    ellps: WGS84
+    units: m
+  shape:
+    width: 220
+    height: 210
+  area_extent:
+    lower_left_xy: [4482711.791060865, -2500612.894073129]
+    upper_right_xy: [4504684.447310865, -2479632.0591121917]
+
+saotome:
+  description: São Tomé and Ilhéu das Rolas
+  projection:
+    proj: eqc
+    ellps: WGS84
+    units: m
+  shape:
+    width: 565
+    height: 684
+  area_extent:
+    lower_left_xy: [705505.3673684598, -11606.849730014801]
+    upper_right_xy: [761962.8868997098, 56752.52526998521]

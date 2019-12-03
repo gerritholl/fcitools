@@ -38,7 +38,7 @@ def get_parser():
 
     parser.add_argument(
             "--filename-pattern", action="store", type=str,
-            default="{area:s}_{dataset:s}.tiff",
+            default="{label:s}_{area:s}_{dataset:s}.tiff",
             help="Filename pattern for output files.")
 
     parser.add_argument(

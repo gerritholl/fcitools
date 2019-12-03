@@ -59,7 +59,8 @@ def unpack_and_show_testdata(
             [areas[nm] for nm in regions],
             d_out,
             fn_out,
-            path_to_coastlines=path_to_coastlines)
+            path_to_coastlines=path_to_coastlines,
+            label=p)
     td.cleanup()
     return names
 
@@ -70,7 +71,8 @@ def show_testdata_from_dir(
         regions,
         d_out,
         fn_out,
-        path_to_coastlines=None):
+        path_to_coastlines=None,
+        label=""):
     """Visualise a directory of EUM FCI test data
 
     From a directory containing EUMETSAT FCI test data, visualise composites
@@ -100,6 +102,9 @@ def show_testdata_from_dir(
         path_to_coastlines (Optional[Str]):
             If given, directory to use for coastlines.
 
+        label (Optiona[Str]):
+            Additional label to substitute into fn_out.
+
     Returns:
         List of filenames written
     """
@@ -118,7 +123,8 @@ def show_testdata_from_dir(
         ls = sc.resample(la)
         for dn in composites + channels:
             fn = pathlib.Path(d_out) / fn_out.format(
-                    area=la.area_id, dataset=dn)
+                    area=la.area_id, dataset=dn,
+                    label=label)
             ls.save_dataset(
                     dn,
                     filename=str(fn),

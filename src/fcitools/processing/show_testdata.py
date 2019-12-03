@@ -6,6 +6,7 @@ channels and composites for selected areas.
 
 import argparse
 from .. import vis
+from .. import ioutil
 
 def get_parser():
     parser = argparse.ArgumentParser(
@@ -33,6 +34,7 @@ def get_parser():
     parser.add_argument(
             "-a", "--areas", action="store", type=str,
             nargs="*",
+            choices=sorted(ioutil.get_all_areas().keys()),
             help="Areas for which to generate those.")
 
     parser.add_argument(

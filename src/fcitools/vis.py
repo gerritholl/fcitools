@@ -4,7 +4,7 @@
 import satpy
 import glob
 import pathlib
-from .ioutil import unpack_tgz
+from . import ioutil
 
 def unpack_and_show_testdata(
         path_to_tgz,
@@ -48,14 +48,15 @@ def unpack_and_show_testdata(
         List of filenames written
     """
 
-    td = unpack_tgz(path_to_tgz)
+    td = ioutil.unpack_tgz(path_to_tgz)
+    areas = ioutil.get_all_areas()
     p = pathlib.Path(path_to_tgz).stem.split(".")[0] # true stem
 
     names = show_testdata_from_dir(
             td.name + "/" + p,
             composites,
             channels,
-            regions,
+            [areas[nm] for nm in regions],
             d_out,
             fn_out,
             path_to_coastlines=path_to_coastlines)
@@ -86,7 +87,7 @@ def show_testdata_from_dir(
             List of channels (datasets) to be generated
 
         regions (List[str]):
-            List of regions/areas these shall be generated for
+            List of AreaDefinition objects these shall be generated for
 
         d_out (str):
             Path to directory where output files shall be written.
@@ -113,11 +114,11 @@ def show_testdata_from_dir(
         overlay = None
     sc.load(channels)
     sc.load(composites)
-    for nm in regions:
-        ls = sc.resample(nm)
+    for la in regions:
+        ls = sc.resample(la)
         for dn in composites + channels:
             fn = pathlib.Path(d_out) / fn_out.format(
-                    area=nm, dataset=dn)
+                    area=la.area_id, dataset=dn)
             ls.save_dataset(
                     dn,
                     filename=str(fn),

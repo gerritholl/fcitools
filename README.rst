@@ -2,15 +2,18 @@
 fcitools
 ========
 
-
-tools for R&D related to FCI
-
+Tools for Research, Testing & Development related to preparing for the
+Flexible Combined Imager (FCI) on Meteosat Third Generation (MTG)
 
 Description
 ===========
 
-A longer description of your project goes here...
+This package contains pieces of code related to researsch, testing, and
+development for the Flexible Combined Imager (FCI), the new imaging
+instrument that will be launched by EUMETSAT in 2021 on Meteosat Third
+Generation (MTG).
 
+It is currently (2019) in early stages of development.
 
 Note
 ====

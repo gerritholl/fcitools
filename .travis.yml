@@ -5,7 +5,6 @@ python:
 env:
   global:
     - PYTHON_VERSION=$TRAVIS_PYTHON_VERSION
-    - NUMPY_VERSION=stable
     - MAIN_CMD="pytest"
     - CONDA_DEPENDENCIES="numpy"
     - PIP_DEPENDENCIES=""

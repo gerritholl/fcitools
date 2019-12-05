@@ -2,6 +2,12 @@
 fcitools
 ========
 
+.. image:: https://api.travis-ci.org/gerritholl/fcitools.svg?branch=master
+    :target: https://travis-ci.org/gerritholl/fcitools
+
+.. image:: https://coveralls.io/repos/github/gerritholl/fcitools/badge.svg?branch=master
+    :target: https://coveralls.io/github/gerritholl/fcitools?branch=master
+
 Tools for Research, Testing & Development related to preparing for the
 Flexible Combined Imager (FCI) on Meteosat Third Generation (MTG)
 

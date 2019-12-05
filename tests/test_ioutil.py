@@ -1,11 +1,11 @@
 from unittest.mock import patch
-import fcitools.ioutil
 
 
 @patch("tarfile.TarFile", autospec=True)
 @patch("tempfile.TemporaryDirectory", autospec=True)
 @patch("gzip.open", autospec=True)
 def test_unpack_tgz(go, td, tf):
+    import fcitools.ioutil
     td.return_value.name = "/foobar"
     fcitools.ioutil.unpack_tgz("/path/to/file.tar.gz")
     tf.return_value.extractall.assert_called_once_with("/foobar")
@@ -18,6 +18,7 @@ def test_get_areas(prf, pac):
     # and pyresample.area_config.load_area
     # such that I get a list of areas
     import pyresample.geometry
+    import fcitools.ioutil
     prf.return_value = "/dev/null"
     ad = pyresample.geometry.AreaDefinition(
             "shrubbery", "it is a good shrubbery", "shrub",

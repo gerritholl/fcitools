@@ -2,11 +2,11 @@
 """
 
 from unittest.mock import patch
-import fcitools.processing.show_testdata
 
 
 @patch("argparse.ArgumentParser", autospec=True)
 def test_get_parser(ap):
+    import fcitools.processing.show_testdata
     fcitools.processing.show_testdata.parse_cmdline()
     assert ap.return_value.add_argument.call_count == 7
 
@@ -15,6 +15,7 @@ def test_get_parser(ap):
 @patch("fcitools.processing.show_testdata.parse_cmdline", autospec=True)
 @patch("fcitools.vis.unpack_and_show_testdata", autospec=True)
 def test_main(us, pc, do):
+    import fcitools.processing.show_testdata
     pc.return_value.path = "/"
     pc.return_value.composites = ["foo"]
     pc.return_value.channels = ["ir_00"]

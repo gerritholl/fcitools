@@ -2,8 +2,8 @@
 fcitools
 ========
 
-.. image:: https://api.travis-ci.org/gerritholl/fcitools.svg?branch=master
-    :target: https://travis-ci.org/gerritholl/fcitools
+.. image:: https://travis-ci.com/gerritholl/fcitools.svg?branch=master
+    :target: https://travis-ci.com/gerritholl/fcitools
 
 .. image:: https://coveralls.io/repos/github/gerritholl/fcitools/badge.svg?branch=master
     :target: https://coveralls.io/github/gerritholl/fcitools?branch=master

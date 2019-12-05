@@ -1,8 +1,6 @@
-import pathlib
-import pytest
-#from pytest_mock import mocker
-from unittest.mock import patch, call
+from unittest.mock import patch
 import fcitools.ioutil
+
 
 @patch("tarfile.TarFile", autospec=True)
 @patch("tempfile.TemporaryDirectory", autospec=True)
@@ -11,6 +9,7 @@ def test_unpack_tgz(go, td, tf):
     td.return_value.name = "/foobar"
     fcitools.ioutil.unpack_tgz("/path/to/file.tar.gz")
     tf.return_value.extractall.assert_called_once_with("/foobar")
+
 
 @patch("pyresample.area_config.load_area", autospec=True)
 @patch("pkg_resources.resource_filename", autospec=True)

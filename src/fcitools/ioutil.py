@@ -7,6 +7,7 @@ import tempfile
 import pkg_resources
 import pyresample
 
+
 def unpack_tgz(path_to_tgz):
     """Unpack a .tar.gz archive to a temporary directory
 
@@ -27,6 +28,7 @@ def unpack_tgz(path_to_tgz):
         od = tempfile.TemporaryDirectory()
         tf.extractall(od.name)
     return od
+
 
 def get_all_areas():
     """Get a dictionary with all findable areas

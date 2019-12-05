@@ -4,10 +4,12 @@
 from unittest.mock import patch
 import fcitools.processing.show_testdata
 
+
 @patch("argparse.ArgumentParser", autospec=True)
 def test_get_parser(ap):
     fcitools.processing.show_testdata.parse_cmdline()
     assert ap.return_value.add_argument.call_count == 7
+
 
 @patch("satpy.utils.debug_on", autospec=True)
 @patch("fcitools.processing.show_testdata.parse_cmdline", autospec=True)

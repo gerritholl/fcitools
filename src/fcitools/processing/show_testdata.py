@@ -6,7 +6,7 @@ channels and composites for selected areas.
 
 import argparse
 from .. import vis
-from .. import ioutil
+
 
 def get_parser():
     parser = argparse.ArgumentParser(
@@ -47,8 +47,10 @@ def get_parser():
 
     return parser
 
+
 def parse_cmdline():
     return get_parser().parse_args()
+
 
 def main():
     from satpy.utils import debug_on

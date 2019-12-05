@@ -6,6 +6,7 @@ import glob
 import pathlib
 from . import ioutil
 
+
 def unpack_and_show_testdata(
         path_to_tgz,
         composites,
@@ -50,7 +51,7 @@ def unpack_and_show_testdata(
 
     td = ioutil.unpack_tgz(path_to_tgz)
     areas = ioutil.get_all_areas()
-    p = pathlib.Path(path_to_tgz).stem.split(".")[0] # true stem
+    p = pathlib.Path(path_to_tgz).stem.split(".")[0]  # true stem
 
     names = show_testdata_from_dir(
             td.name + "/" + p,
@@ -63,6 +64,7 @@ def unpack_and_show_testdata(
             label=p)
     td.cleanup()
     return names
+
 
 def show_testdata_from_dir(
         d,

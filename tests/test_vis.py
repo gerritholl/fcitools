@@ -3,14 +3,13 @@
 
 import pathlib
 from unittest.mock import patch, Mock, call
-import fcitools.vis
-import fcitools.ioutil
 
 
 @patch("fcitools.ioutil.unpack_tgz", autospec=True)
 @patch("fcitools.ioutil.get_all_areas", autospec=True)
 @patch("fcitools.vis.show_testdata_from_dir", autospec=True)
 def test_unpack_and_show_testdata(st, ga, ut):
+    import fcitools.vis
     ut.return_value.name = "/tmp/pinguin"
     ga.return_value = {"olympus_mons": "mountain"}
     fcitools.vis.unpack_and_show_testdata(
@@ -27,6 +26,7 @@ def test_unpack_and_show_testdata(st, ga, ut):
 @patch("satpy.Scene", autospec=True)
 @patch("glob.glob", autospec=True)
 def test_show_testdata(gl, sc):
+    import fcitools.vis
     m = Mock()
     m.area_id = "mountain"
     v = Mock()

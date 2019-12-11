@@ -1,16 +1,13 @@
 """Geolocation-related routines
 """
 
-import math
-import numbers
 import pyproj
 import numpy
 import matplotlib.colors
-import satpy
 import dask.array
-import cv2
 import PIL
 import matplotlib.pyplot
+
 
 def calc_heading_distance_accurate(lat1, lon1, lat2, lon2):
     """Calculating heading and distance, accurately
@@ -18,6 +15,7 @@ def calc_heading_distance_accurate(lat1, lon1, lat2, lon2):
     Uses pyproj, assumes WGS84
     """
     geod = pyproj.geod.Geod(ellps="WGS84")
+
     def _wrap(lon1, lat1, lon2, lat2):
         tp = geod.inv(lon1, lat1, lon2, lat2)
         return numpy.concatenate([
@@ -33,7 +31,7 @@ def calc_heading_distance_accurate(lat1, lon1, lat2, lon2):
         heading = rv[..., 0]
         distance = rv[..., 1]
         return (heading, distance)
-    else: # not a dask array
+    else:  # not a dask array
         (heading, _, distance) = geod.inv(lon1, lat1, lon2, lat2)
         return heading, distance
 
@@ -70,9 +68,10 @@ def calc_rgb_from_heading_distance(heading, distance, f=0.01):
             the intensity will max out at 100.
     """
     hsv = dask.array.concatenate([
-            (heading[..., numpy.newaxis]+180)/360,
+            (heading[..., numpy.newaxis] + 180) / 360,
             dask.array.full(heading.shape + (1,), 1, dtype="f4"),
-            dask.array.where(f*distance<1, f*distance, 1)[..., numpy.newaxis]],
+            dask.array.where(f * distance < 1,
+                             f * distance, 1)[..., numpy.newaxis]],
             axis=2)
     rgb = matplotlib.colors.hsv_to_rgb(hsv)
     return rgb
@@ -141,7 +140,8 @@ def plot_legend(rgb,
     return (f, ax)
 
 
-def compare_geolocation(sc, chan, _x_start=1, _y_start=1, _x_end=None, _y_end=None):
+def compare_geolocation(sc, chan, _x_start=1, _y_start=1,
+                        _x_end=None, _y_end=None):
     """Compare pytroll and EUM geolocation
 
     Compare geolocation as calculated by satpy and the one provided by

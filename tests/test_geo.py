@@ -1,5 +1,5 @@
-import pytest
 from unittest.mock import patch, MagicMock
+
 
 def test_calc_heading_distance_accurate():
     # just a thin wrapper around pyproj
@@ -34,7 +34,7 @@ def test_rgb_from_heading_distance():
     (hm, dm) = np.meshgrid(h, d)
     rgb = calc_rgb_from_heading_distance(hm, dm, f=1/1000)
     # all black at zero distance
-    assert (rgb[0, :, :]==0).all()
+    assert (rgb[0, :, :] == 0).all()
     # fully saturated at 1000 metre distance
     # test main colours
     np.testing.assert_array_equal(rgb[3, 0, :], [1, 1, 0])
@@ -52,7 +52,7 @@ def test_get_legend():
     n = 361
     rgb = get_legend(n, (-180, 180), (0, 100))
     assert rgb.shape == (n, n, 3)
-    assert (rgb[0, :, :]==0).all()
+    assert (rgb[0, :, :] == 0).all()
     np.testing.assert_array_equal(rgb[-1, 0, :], [1, 0, 0])
     np.testing.assert_array_equal(rgb[-1, 60, :], [1, 1, 0])
     np.testing.assert_array_equal(rgb[-1, 120, :], [0, 1, 0])
@@ -64,7 +64,7 @@ def test_get_legend():
 def test_plot_legend():
     from fcitools.geo import plot_legend
     import numpy as np
-    leg = np.arange(25).reshape(5,5)
+    leg = np.arange(25).reshape(5, 5)
     ang_range = (-180, 180)
     dist_range = (0, 10)
     (f, a) = plot_legend(leg, ang_range, dist_range)
@@ -102,17 +102,17 @@ def test_compare_geolocation():
     np.testing.assert_allclose(
             rgb1,
             np.array([[[1, 0, 0], [1, 0, 0], [1, 0, 0]],
-                       [[0.5, 1, 0], [0.5, 1, 0], [0.5, 1, 0]],
-                       [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-                     ]),
+                      [[0.5, 1, 0], [0.5, 1, 0], [0.5, 1, 0]],
+                      [[0, 0, 0], [0, 0, 0], [0, 0, 0]]]),
             rtol=0.01)
 
-    np.testing.assert_allclose(rgb2, np.zeros(shape=(3,3,3)))
+    np.testing.assert_allclose(rgb2, np.zeros(shape=(3, 3, 3)))
+
 
 @patch("PIL.Image")
 def test_save_rgb(pi):
     import numpy as np
     from fcitools.geo import save_rgb
-    rgb = np.linspace(0, 1, 5*5*3).reshape(5,5,3)
+    rgb = np.linspace(0, 1, 5 * 5 * 3).reshape(5, 5, 3)
     save_rgb(rgb, "/dev/null")
     pi.fromarray.return_value.save.assert_called_once_with("/dev/null")

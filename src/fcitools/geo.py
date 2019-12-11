@@ -2,6 +2,7 @@
 """
 
 import math
+import numbers
 import pyproj
 import numpy
 import matplotlib.colors
@@ -17,27 +18,56 @@ def calc_heading_distance_accurate(lat1, lon1, lat2, lon2):
     Uses pyproj, assumes WGS84
     """
     geod = pyproj.geod.Geod(ellps="WGS84")
-    (heading, _, distance) = geod.inv(lon1.compute(), lat1.compute(), lon2.compute(), lat2.compute())
-    return heading, distance
-
-    # should try to dask-ify at some point!
-    # problem: https://stackoverflow.com/q/59270302/974555
-    def wrap(lon1, lat1, lon2, lat2):
+    def _wrap(lon1, lat1, lon2, lat2):
         tp = geod.inv(lon1, lat1, lon2, lat2)
-        return dask.array.dstack([tp[0], tp[2]])
-    rv = dask.array.map_blocks(
-            wrap, lon1, lat1, lon2, lat2,
-            dtype="f4",
-            chunks=(128, 128, 2))
-    heading = rv[:, :, 0]
-    distance = rv[:, :, 1]
-    return (heading, distance)
+        return numpy.concatenate([
+            tp[0][..., numpy.newaxis],
+            tp[2][..., numpy.newaxis]],
+            axis=lon1.ndim)
+    if hasattr(lon1, "chunks"):
+        rv = dask.array.map_blocks(
+                _wrap, lon1, lat1, lon2, lat2,
+                dtype="f4",
+                chunks=lon1.chunks + (2,),
+                new_axis=lon1.ndim)
+        heading = rv[..., 0]
+        distance = rv[..., 1]
+        return (heading, distance)
+    else: # not a dask array
+        (heading, _, distance) = geod.inv(lon1, lat1, lon2, lat2)
+        return heading, distance
 
 
 def calc_rgb_from_heading_distance(heading, distance, f=0.01):
     """Calculate RGB from heading and distance
 
-    Heading shall be between ±pi/2
+    Calculate an RGB visualising the heading and the distance.  The heading
+    will be mapped unto the hue in HSV space, and the distance will map onto
+    the brightness, or value in HSV.  The saturation is always set to 1.
+    This means that the resulting RGB will have those primary and secondary
+    colours:
+
+    * black if distance is zero
+    * red [1, 0, 0] where the heading is straight south (180 degrees)
+    * green [0, 1, 0] where the heading is WNW (-60 degrees)
+    * blue [0, 0, 1] where the heading is ENE (60 degrees)
+    * cyan [0, 1, 1] where the heading is straight north (0 degrees)
+    * yellow [1, 1, 0] where heading is WSW (-120 degrees)
+    * magenta [1, 0, 1] where heading is ESE (120 degrees)
+
+    To get a legend illustrating the resulting angles and magnitudes, use
+    :func:`get_legend` and :func:`plot_legend`.
+
+    Args:
+        heading (ndarray):
+            Direction, where 0 is north, 90 is east, -90 is west, and ±180
+            is south.
+        distance (ndarray):
+            Distance / magnitude
+        f (Optional[float]):
+            Scale factor.  After multiplication with this scale factor, any
+            distances larger than 1 will be capped.  So if you pass in 0.01,
+            the intensity will max out at 100.
     """
     hsv = dask.array.concatenate([
             (heading[..., numpy.newaxis]+180)/360,

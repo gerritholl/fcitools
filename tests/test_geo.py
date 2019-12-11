@@ -1,58 +1,118 @@
-import numpy as np
+import pytest
 from unittest.mock import patch, MagicMock
 
+def test_calc_heading_distance_accurate():
+    # just a thin wrapper around pyproj
+    import dask.array.core
+    import dask.array
+    from fcitools.geo import calc_heading_distance_accurate
+    from pyproj.geod import Geod
+    import numpy as np
+    lat1 = np.array([[1, 2], [3, 4]])
+    lon1 = np.array([[1, 2], [3, 4]])
+    dlat1 = dask.array.from_array(lat1)
+    dlon1 = dask.array.from_array(lon1)
+    lat2 = lat1 + 0.5
+    lon2 = lon1 + 0.5
+    dlat2 = dlat1 + 0.5
+    dlon2 = dlon1 + 0.5
+    (hr, _, dr) = Geod(ellps="WGS84").inv(lon1, lat1, lon2, lat2)
+    (hhn, dhn) = calc_heading_distance_accurate(lon1, lat1, lon2, lat2)
+    (hhd, dhd) = calc_heading_distance_accurate(dlon1, dlat1, dlon2, dlat2)
+    assert isinstance(hhd, dask.array.core.Array)
+    np.testing.assert_allclose(hhn, hr)
+    np.testing.assert_allclose(dhn, dr)
+    np.testing.assert_allclose(hhd, hr)
+    np.testing.assert_allclose(dhd, dr)
+
+
+def test_rgb_from_heading_distance():
+    from fcitools.geo import calc_rgb_from_heading_distance
+    import numpy as np
+    h = [-120, -60, 0, 60, 120, 180]
+    d = np.array([0, 250, 500, 1000])
+    (hm, dm) = np.meshgrid(h, d)
+    rgb = calc_rgb_from_heading_distance(hm, dm, f=1/1000)
+    # all black at zero distance
+    assert (rgb[0, :, :]==0).all()
+    # fully saturated at 1000 metre distance
+    # test main colours
+    np.testing.assert_array_equal(rgb[3, 0, :], [1, 1, 0])
+    np.testing.assert_array_equal(rgb[3, 1, :], [0, 1, 0])
+    np.testing.assert_array_equal(rgb[3, 2, :], [0, 1, 1])
+    np.testing.assert_array_equal(rgb[3, 3, :], [0, 0, 1])
+    np.testing.assert_array_equal(rgb[3, 4, :], [1, 0, 1])
+    np.testing.assert_array_equal(rgb[3, 5, :], [1, 0, 0])
+
+
+def test_get_legend():
+    from fcitools.geo import get_legend
+    import numpy as np
+
+    n = 361
+    rgb = get_legend(n, (-180, 180), (0, 100))
+    assert rgb.shape == (n, n, 3)
+    assert (rgb[0, :, :]==0).all()
+    np.testing.assert_array_equal(rgb[-1, 0, :], [1, 0, 0])
+    np.testing.assert_array_equal(rgb[-1, 60, :], [1, 1, 0])
+    np.testing.assert_array_equal(rgb[-1, 120, :], [0, 1, 0])
+    np.testing.assert_array_equal(rgb[-1, 180, :], [0, 1, 1])
+    np.testing.assert_array_equal(rgb[-1, 240, :], [0, 0, 1])
+    np.testing.assert_array_equal(rgb[-1, 300, :], [1, 0, 1])
+
+
+def test_plot_legend():
+    from fcitools.geo import plot_legend
+    import numpy as np
+    leg = np.arange(25).reshape(5,5)
+    ang_range = (-180, 180)
+    dist_range = (0, 10)
+    (f, a) = plot_legend(leg, ang_range, dist_range)
+    assert a.get_xlim() == ang_range
+    assert a.get_ylim() == dist_range
+    assert a.get_aspect() == "auto"
+    assert f.axes == [a]
+    assert a.get_xlabel() == "direction / degrees"
+    assert a.get_ylabel() == "distance / m"
+
+
 def test_compare_geolocation():
+    import numpy as np
     import fcitools.geo
     sc = MagicMock()
     sc["vis_09"].area.x_size = 5
     sc["vis_09"].area.y_size = 5
     sc["vis_09"].area.resolution = (1000, 1000)
-    sc["vis_09"].area.get_lonlats.return_value = (
-        np.array([
-            [-5.1331, -5.1240, -5.1149, -5.1058, -5.0968],
-            [-5.1330, -5.1239, -5.1148, -5.1058, -5.0967],
-            [-5.1329, -5.1238, -5.1148, -5.1057, -5.0966],
-            [-5.1328, -5.1238, -5.1147, -5.1056, -5.0965],
-            [-5.1328, -5.1237, -5.1146, -5.1055, -5.0964]]),
-        np.array([
-            [-5.1475, -5.1475, -5.1475, -5.1475, -5.1475],
-            [-5.1384, -5.1384, -5.1384, -5.1384, -5.1384],
-            [-5.1293, -5.1293, -5.1293, -5.1293, -5.1293],
-            [-5.1202, -5.1202, -5.1202, -5.1202, -5.1201],
-            [-5.1111, -5.1111, -5.1111, -5.1111, -5.1110]]))
 
-    rgb = fcitools.geo.compare_geolocation(sc, "vis_09",
-            _x_start=5001, _x_end=5006,
-            _y_start=5001, _y_end=5006)
+    lon1 = np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8]])
+    lat1 = np.array([[8, 7, 6], [5, 4, 3], [2, 1, 0]])
 
-    # NB: I don't know if this is an accurate reference, but at least this
-    # was the result 2019-12-09 :)
+    lon2 = np.array([[0, 1, 2], [4, 5, 6], [6, 7, 8]])
+    lat2 = np.array([[9, 8, 7], [5, 4, 3], [2, 1, 0]])
+
+    sc["vis_09"].area.get_lonlats.return_value = (lon1, lat1)
+
+    fs = MagicMock()
+    with patch.dict("sys.modules", {"fcitools.eumsecret": fs}):
+        fs.pixcoord2geocoord.return_value = (lat2, lon2)
+        rgb1 = fcitools.geo.compare_geolocation(sc, "vis_09")
+        fs.pixcoord2geocoord.return_value = (lat1, lon1)
+        rgb2 = fcitools.geo.compare_geolocation(sc, "vis_09")
 
     np.testing.assert_allclose(
-            rgb,
-            np.array([[[-8.69114307e+01,  3.42170987e-01, -6.87895252e+01],
-                       [ 1.27875242e-02,  3.26081868e+00,  1.63520776e-04],
-                       [ 2.56023057e-02,  6.52858795e+00,  6.55478056e-04],
-                       [ 3.84171036e-02,  9.79636141e+00,  1.47587385e-03],
-                       [ 5.11616755e-02,  1.30462273e+01,  2.61751704e-03]],
-                      [[ 1.28042208e-02,  3.26507630e+00,  1.63948070e-04],
-                       [ 2.96397055e-01, -7.52848521e+01, -5.90910861e+01],
-                       [ 1.28259775e-02,  3.27062427e+00,  1.64505700e-04],
-                       [ 2.55707433e-02,  6.52053955e+00,  6.53862914e-04],
-                       [ 3.83855099e-02,  9.78830504e+00,  1.47344737e-03]],
-                      [[ 2.55805785e-02,  6.52304753e+00,  6.54365999e-04],
-                       [ 1.27655621e-02,  3.25521833e+00,  1.62959575e-04],
-                       [-1.59620411e+02, -1.09906075e+02,  6.28426814e-01],
-                       [ 1.27948495e-02,  3.26268661e+00,  1.63708173e-04],
-                       [ 2.56095111e-02,  6.53042534e+00,  6.55847060e-04]],
-                      [[ 3.83568622e-02,  9.78099987e+00,  1.47124888e-03],
-                       [ 2.56122890e-02,  6.53113371e+00,  6.55989350e-04],
-                       [ 1.27974398e-02,  3.26334715e+00,  1.63774466e-04],
-                       [ 5.97908922e-01, -1.51868866e+02, -9.00280261e+01],
-                       [ 1.27622690e-02,  3.25437860e+00,  1.62875510e-04]],
-                      [[ 5.12034834e-02,  1.30568883e+01,  2.62179671e-03],
-                       [ 3.83882748e-02,  9.78901007e+00,  1.47365964e-03],
-                       [ 2.55731436e-02,  6.52115162e+00,  6.53985674e-04],
-                       [ 1.27582136e-02,  3.25334446e+00,  1.62772014e-04],
-                       [-5.56895234e+01,  2.19250092e-01, -1.15331809e+01]]]))
+            rgb1,
+            np.array([[[1, 0, 0], [1, 0, 0], [1, 0, 0]],
+                       [[0.5, 1, 0], [0.5, 1, 0], [0.5, 1, 0]],
+                       [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+                     ]),
+            rtol=0.01)
 
+    np.testing.assert_allclose(rgb2, np.zeros(shape=(3,3,3)))
+
+@patch("PIL.Image")
+def test_save_rgb(pi):
+    import numpy as np
+    from fcitools.geo import save_rgb
+    rgb = np.linspace(0, 1, 5*5*3).reshape(5,5,3)
+    save_rgb(rgb, "/dev/null")
+    pi.fromarray.return_value.save.assert_called_once_with("/dev/null")

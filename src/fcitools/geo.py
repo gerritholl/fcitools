@@ -140,26 +140,19 @@ def plot_legend(rgb,
     return (f, ax)
 
 
-def compare_geolocation(sc, chan, _x_start=1, _y_start=1,
-                        _x_end=None, _y_end=None):
-    """Compare pytroll and EUM geolocation
-
-    Compare geolocation as calculated by satpy and the one provided by
-    EUMETSAT.  Note that the EUMETSAT code is not publicly available.
+def get_lat_lon_pair(sc, chan, _x_start=1, _y_start=1,
+        _x_end=None, _y_end=None):
+    """Get a pair of lat/lons
 
     Args:
         sc (satpy.Scene)
             satpy Scene object to use for the calculations.
         chan (str)
             Channel (or otherwise satpy dataset) for which to calculate the
-            geolocation.
+            geolocation.  Channel must be loaded first.
     Returns:
-        ndarray [n_x, n_y, 3] RGB image corresponding to the full disk size of
-        the channel.  The hue of each pixel corresponds to the direction of the
-        displacement between EUMETSAT and pytroll, the brightness value
-        corresponds to the magnitude.  For a legend, call :func:`get_legend`.
+        (lat_pyt, lon_pyt, lat_eum, lon_eum)
     """
-
     ar = sc[chan].area
     _x_end = _x_end if _x_end is not None else ar.x_size + 1
     _y_end = _y_end if _y_end is not None else ar.y_size + 1
@@ -175,6 +168,32 @@ def compare_geolocation(sc, chan, _x_start=1, _y_start=1,
             eumsecret.grid_params[res]["azimuth_grid_sampling"],
             eumsecret.grid_params[res]["elevation_grid_sampling"])
     (pyt_lon, pyt_lat) = ar.get_lonlats(chunks=128, dtype="f4")
+
+    return (pyt_lat, pyt_lon, eum_lat, eum_lon)
+
+
+def compare_geolocation(sc, chan, _x_start=1, _y_start=1,
+                        _x_end=None, _y_end=None):
+    """Compare pytroll and EUM geolocation
+
+    Compare geolocation as calculated by satpy and the one provided by
+    EUMETSAT.  Note that the EUMETSAT code is not publicly available.
+
+    Args:
+        sc (satpy.Scene)
+            satpy Scene object to use for the calculations.
+        chan (str)
+            Channel (or otherwise satpy dataset) for which to calculate the
+            geolocation.  Channel must be already loaded.
+    Returns:
+        ndarray [n_x, n_y, 3] RGB image corresponding to the full disk size of
+        the channel.  The hue of each pixel corresponds to the direction of the
+        displacement between EUMETSAT and pytroll, the brightness value
+        corresponds to the magnitude.  For a legend, call :func:`get_legend`.
+    """
+
+    (pyt_lat, pyt_lon, eum_lat, eum_lon) = get_lat_lon_pair(sc, chan,
+            _x_start=_x_start, _y_start=_y_start, _x_end=_x_end, _y_end=_y_end)
 
     (heading, distance) = calc_heading_distance_accurate(
             eum_lat, eum_lon, pyt_lat, pyt_lon)

@@ -68,7 +68,6 @@ def unpack_and_show_testdata(
             path_to_coastlines=path_to_coastlines,
             label=p,
             show_only_coastlines=show_only_coastlines)
-    td.cleanup()
     return names
 
 

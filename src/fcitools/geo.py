@@ -159,7 +159,7 @@ def get_lat_lon_pair(sc, chan, _x_start=1, _y_start=1,
     xc = dask.array.arange(_x_start, _x_end, dtype="f4", chunks=128)
     yc = dask.array.arange(_y_start, _y_end, dtype="f4", chunks=128)
     (y, x) = dask.array.meshgrid(yc, xc)
-    res = abs(int(ar.resolution[0]))
+    res = abs(round(ar.resolution[0]))
     from . import eumsecret
     (eum_lat, eum_lon) = eumsecret.pixcoord2geocoord(
             x, y, eumsecret.r_eq, eumsecret.f, eumsecret.h,

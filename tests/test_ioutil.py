@@ -1,7 +1,5 @@
 import pathlib
 import pytest
-import os
-import tarfile
 from unittest.mock import patch
 
 
@@ -24,7 +22,6 @@ def test_get_areas(prf, pac, areas):
     # need to mock pkg_resources.resource_filename
     # and pyresample.area_config.load_area
     # such that I get a list of areas
-    import pyresample.geometry
     import fcitools.ioutil
     prf.return_value = "/dev/null"
     pac.return_value = areas

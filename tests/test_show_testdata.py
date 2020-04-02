@@ -1,7 +1,6 @@
 """Test the show_testdata script
 """
 
-import random
 from unittest.mock import patch
 
 
@@ -18,12 +17,12 @@ def test_get_parser(ap):
 def test_main(tT, fpsp, sS, tfs, tmp_path):
     import fcitools.processing.show_testdata
     fpsp.return_value = fcitools.processing.show_testdata.\
-            get_parser().parse_args([
+        get_parser().parse_args([
                 str(tfs[1]),
                 str(tmp_path),
-        "--composites", "overview", "natural_color", "fog",
-        "--channels", "vis_04", "nir_13", "ir_38", "wv_87",
-        "-a", "socotra", "bornholm"])
+                "--composites", "overview", "natural_color", "fog",
+                "--channels", "vis_04", "nir_13", "ir_38", "wv_87",
+                "-a", "socotra", "bornholm"])
     tT.return_value.name = str(tmp_path / "raspberry")
     fcitools.processing.show_testdata.main()
     sS.assert_called_once_with(
@@ -31,4 +30,3 @@ def test_main(tT, fpsp, sS, tfs, tmp_path):
         filenames=[str(tmp_path / "raspberry" / "file1.dat"),
                    str(tmp_path / "raspberry" / "file2.dat")],
         reader=["fci_l1c_fdhsi"])
-

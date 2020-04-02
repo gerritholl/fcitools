@@ -2,7 +2,6 @@
 """
 
 import satpy
-import glob
 import pathlib
 from . import ioutil
 

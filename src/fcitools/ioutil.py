@@ -1,11 +1,8 @@
 """Utilities related to IO
 """
 
-import pathlib
 import tarfile
 import tempfile
-import pkg_resources
-import pyresample
 import sattools.ptc
 
 

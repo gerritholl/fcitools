@@ -1,9 +1,8 @@
 """Test visualisation routines
 """
 
-import pytest
 import pathlib
-from unittest.mock import patch, Mock, call
+from unittest.mock import patch, call
 
 
 @patch("satpy.Scene", autospec=True)
@@ -11,7 +10,7 @@ from unittest.mock import patch, Mock, call
 def test_unpack_and_show_testdata(ga, sS, tfs, tmp_path, areas):
     import fcitools.vis
     ga.return_value = {"shrubbery": areas[0]}
-    L = fcitools.vis.unpack_and_show_testdata(
+    fcitools.vis.unpack_and_show_testdata(
             tfs[0], ["mars_rgb"], ["vis_00"],
             ["shrubbery"], tmp_path)
     ga.assert_called_once_with()

@@ -11,21 +11,22 @@ def test_get_parser(ap):
     assert ap.return_value.add_argument.call_count == 7
 
 
-@patch("satpy.utils.debug_on", autospec=True)
+@patch("satpy.Scene", autospec=True)
 @patch("fcitools.processing.show_testdata.parse_cmdline", autospec=True)
-@patch("fcitools.vis.unpack_and_show_testdata", autospec=True)
-def test_main(us, pc, do):
+@patch("tempfile.TemporaryDirectory", autospec=True)
+def test_main(tT, fpsp, sS, tfs, tmp_path):
     import fcitools.processing.show_testdata
-    pc.return_value.path = "/"
-    pc.return_value.composites = ["foo"]
-    pc.return_value.channels = ["ir_00"]
-    pc.return_value.areas = ["mars"]
-    pc.return_value.outdir = "/out"
-    pc.return_value.filename_pattern = "{label:s}_{area:s}_{dataset:s}.tiff"
-    pc.return_value.coastline_dir = "/coast"
+    fpsp.return_value = fcitools.processing.show_testdata.\
+        get_parser().parse_args([
+                str(tfs[1]),
+                str(tmp_path),
+                "--composites", "overview", "natural_color", "fog",
+                "--channels", "vis_04", "nir_13", "ir_38", "wv_87",
+                "-a", "socotra", "bornholm"])
+    tT.return_value.name = str(tmp_path / "raspberry")
     fcitools.processing.show_testdata.main()
-    do.assert_called_once_with()
-    pc.assert_called_once_with()
-    us.assert_called_once_with("/", ["foo"], ["ir_00"], ["mars"], "/out",
-                               "{label:s}_{area:s}_{dataset:s}.tiff",
-                               "/coast")
+    sS.assert_called_once_with(
+        sensor="fci",
+        filenames=[str(tmp_path / "raspberry" / "file1.dat"),
+                   str(tmp_path / "raspberry" / "file2.dat")],
+        reader=["fci_l1c_fdhsi"])

@@ -2,7 +2,6 @@
 """
 
 import satpy
-import glob
 import pathlib
 from . import ioutil
 
@@ -34,7 +33,7 @@ def unpack_and_show_testdata(
         regions (List[str]):
             List of regions/areas these shall be generated for
 
-        d_out (str):
+        d_out (pathlib.Path):
             Path to directory where output files shall be written.
 
         fn_out (Optional[str]):
@@ -49,12 +48,13 @@ def unpack_and_show_testdata(
         List of filenames written
     """
 
-    td = ioutil.unpack_tgz(path_to_tgz)
+    (td, names) = ioutil.unpack_tgz(path_to_tgz)
     areas = ioutil.get_all_areas()
     p = pathlib.Path(path_to_tgz).stem.split(".")[0]  # true stem
+    ptd = pathlib.Path(td.name)
 
     names = show_testdata_from_dir(
-            td.name + "/" + p,
+            [str(ptd / name) for name in names],
             composites,
             channels,
             [areas[nm] for nm in regions],
@@ -67,7 +67,7 @@ def unpack_and_show_testdata(
 
 
 def show_testdata_from_dir(
-        d,
+        files,
         composites,
         channels,
         regions,
@@ -81,8 +81,8 @@ def show_testdata_from_dir(
     and channels for the given regions/areas, possibly adding coastlines.
 
     Args:
-        d (str):
-            Path to directory containing test data
+        files (List[pathlib.Path]):
+            Paths to files
 
         composites (List[str]):
             List of composites to be generated
@@ -93,7 +93,7 @@ def show_testdata_from_dir(
         regions (List[str]):
             List of AreaDefinition objects these shall be generated for
 
-        d_out (str):
+        d_out (pathlib.Path):
             Path to directory where output files shall be written.
 
         fn_out (Optional[str]):
@@ -113,7 +113,7 @@ def show_testdata_from_dir(
     L = []
     sc = satpy.Scene(
             sensor="fci",
-            filenames=glob.glob(d + "/*BODY*.nc"),
+            filenames=files,
             reader=["fci_l1c_fdhsi"])
     if path_to_coastlines is not None:
         overlay = {"coast_dir": path_to_coastlines, "color": "red"}
@@ -124,7 +124,7 @@ def show_testdata_from_dir(
     for la in regions:
         ls = sc.resample(la)
         for dn in composites + channels:
-            fn = pathlib.Path(d_out) / fn_out.format(
+            fn = d_out / fn_out.format(
                     area=la.area_id, dataset=dn,
                     label=label)
             ls.save_dataset(

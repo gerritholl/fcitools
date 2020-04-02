@@ -1,11 +1,8 @@
 """Utilities related to IO
 """
 
-import gzip
 import tarfile
 import tempfile
-import pkg_resources
-import pyresample
 import sattools.ptc
 
 
@@ -21,14 +18,21 @@ def unpack_tgz(path_to_tgz):
 
     Returns:
 
-        `TemporaryDirectory` object
+        (`TemporaryDirectory` object, List[str] with names)
     """
 
-    with gzip.open(path_to_tgz) as fd:
-        tf = tarfile.TarFile(fileobj=fd)
+    if path_to_tgz.suffix == ".tar":
+        mode = "r"
+    elif path_to_tgz.suffix in {".bz2", ".gz", ".xz"}:
+        mode = "r:" + path_to_tgz.suffix[1:]
+    else:
+        raise ValueError(f"Not a gz/bz2/lzma file: {path_to_tgz!s}")
+
+    with tarfile.open(path_to_tgz, mode) as tf:
         od = tempfile.TemporaryDirectory()
+        names = tf.getnames()
         tf.extractall(od.name)
-    return od
+    return (od, names)
 
 
 def get_all_areas():

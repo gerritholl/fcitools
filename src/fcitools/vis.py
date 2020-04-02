@@ -52,9 +52,10 @@ def unpack_and_show_testdata(
     (td, names) = ioutil.unpack_tgz(path_to_tgz)
     areas = ioutil.get_all_areas()
     p = pathlib.Path(path_to_tgz).stem.split(".")[0]  # true stem
+    ptd = pathlib.Path(td.name)
 
     names = show_testdata_from_dir(
-            names,
+            [str(ptd / name) for name in names],
             composites,
             channels,
             [areas[nm] for nm in regions],

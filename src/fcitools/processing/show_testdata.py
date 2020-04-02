@@ -4,6 +4,7 @@ From FCI testdata displayed in .tar.gz archives, display selected
 channels and composites for selected areas.
 """
 
+import pathlib
 import argparse
 from .. import vis
 
@@ -14,11 +15,11 @@ def get_parser():
             formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument(
-            "path", action="store", type=str,
+            "path", action="store", type=pathlib.Path,
             help="Path to .tar.gz containing testdata")
 
     parser.add_argument(
-            "outdir", action="store", type=str,
+            "outdir", action="store", type=pathlib.Path,
             help="Directory where to write resulting images.")
 
     parser.add_argument(

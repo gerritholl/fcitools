@@ -1,24 +1,22 @@
 import pytest
-import os
 import tarfile
 
 
 @pytest.fixture
 def tfs(tmp_path):
     ptd = tmp_path / "tartest1"
-    ptd.mkdir(exist_ok=True, parents=True)
-    os.chdir(ptd)
-    with open("file1.dat", "wb") as fp:
-        fp.write(b"abcd")
-    with open("file2.dat", "wb") as fp:
-        fp.write(b"efgh")
-    with tarfile.open(ptd / "file.tar", "w") as tf:
-        tf.add("file1.dat")
-        tf.add("file2.dat")
-    with tarfile.open(ptd / "file.tar.gz", "w:gz") as tf:
-        tf.add("file1.dat")
-        tf.add("file2.dat")
-    return (ptd / "file.tar", ptd / "file.tar.gz")
+    sd = ptd / "subdir"
+    sd.mkdir(exist_ok=False, parents=True)
+    for i in range(3):
+        with (sd / f"file{i:d}.dat").open("wb") as fp:
+            fp.write(b"abcd")
+    tfn1 = ptd / "file.tar"
+    tfn2 = ptd / "file.tar.gz"
+    with tarfile.open(tfn1, "w") as tf:
+        tf.add(sd, arcname=sd.name)
+    with tarfile.open(tfn2, "w:gz") as tf:
+        tf.add(sd, arcname=sd.name)
+    return (tfn1, tfn2)
 
 
 @pytest.fixture

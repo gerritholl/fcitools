@@ -48,13 +48,12 @@ def unpack_and_show_testdata(
         List of filenames written
     """
 
-    (td, names) = ioutil.unpack_tgz(path_to_tgz)
+    paths = ioutil.unpack_tgz(path_to_tgz)
     areas = ioutil.get_all_areas()
     p = pathlib.Path(path_to_tgz).stem.split(".")[0]  # true stem
-    ptd = pathlib.Path(td.name)
 
     names = show_testdata_from_dir(
-            [str(ptd / name) for name in names],
+            [str(p) for p in paths],
             composites,
             channels,
             [areas[nm] for nm in regions],
@@ -62,7 +61,6 @@ def unpack_and_show_testdata(
             fn_out,
             path_to_coastlines=path_to_coastlines,
             label=p)
-    td.cleanup()
     return names
 
 

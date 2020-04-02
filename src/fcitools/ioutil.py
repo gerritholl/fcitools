@@ -3,7 +3,6 @@
 
 import logging
 import tarfile
-import tempfile
 import sattools.ptc
 import sattools.io
 

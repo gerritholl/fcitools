@@ -53,7 +53,7 @@ def unpack_and_show_testdata(
     p = pathlib.Path(path_to_tgz).stem.split(".")[0]  # true stem
 
     names = show_testdata_from_dir(
-            [str(p) for p in paths],
+            {str(p) for p in paths},
             composites,
             channels,
             [areas[nm] for nm in regions],

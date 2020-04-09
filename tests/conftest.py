@@ -1,5 +1,11 @@
 import pytest
+import os
 import tarfile
+
+
+@pytest.fixture(scope="session", autouse=True)
+def setUp(tmp_path_factory):
+    os.environ["XDG_CACHE_HOME"] = str(tmp_path_factory.mktemp("scratch"))
 
 
 @pytest.fixture

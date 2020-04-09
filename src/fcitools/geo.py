@@ -1,4 +1,41 @@
-"""Geolocation-related routines
+"""Geolocation-related routines.
+
+This module contains routines related to geolocation calculations.  In
+particular, it contains methods to calculate and visualise the difference
+between the pytroll FCI geolocation and those provided by EUMETSAT.  The
+EUMETSAT calculation however is not publicly available.
+
+Example code of how to use this::
+
+    import numpy
+    from satpy import Scene
+    from glob import glob
+    from PIL import Image
+    import fcitools.geo
+    srcdir = "/media/nas/x21308/2020_04_MTG_unofficial_Testdata/20130804_RC72/"
+    fciscene = Scene(sensor="fci", reader=["fci_l1c_fdhsi"],
+		     filenames=glob(srcdir + "/*BODY*.nc"))
+    fciscene.load(["vis_09"])
+    rgb = fcitools.geo.compare_geolocation(fciscene, "vis_09")
+
+    fcitools.geo.save_rgb(rgb, "/tmp/test.png")
+    #fcitools.geo.save_rgb(fcitools.geo.get_legend(), "/tmp/legend.png")
+    (f, ax) = fcitools.geo.plot_legend(fcitools.geo.get_legend())
+    f.savefig("/tmp/legend.png")
+
+    (pyt_lat, pyt_lon, eum_lat, eum_lon) = fcitools.geo.get_lat_lon_pair(fciscene, "vis_09")
+    (heading, distance) = fcitools.geo.calc_heading_distance_accurate(eum_lat, eum_lon, pyt_lat, pyt_lon)
+    distcomp = distance.compute()
+    print(np.median(ma.masked_invalid(distcomp)))
+
+This reveals that with the spring 2020 test data release, the median difference
+between the two calculations is 8.628 metre.  For comparison, the distance
+between (45N, 45E) and ((45+eps)N, 45E) is 42 cm in single precision and 1.1 nm
+in double precision.  The cases with large difference are near the edge.  Among
+the 100 pixels closest to the rim, the median is 73 metre, and 5% of those
+pixels have more than 287 metre difference, in two opposite directions.  See
+https://pytroll.slack.com/files/UGU1HTMUG/F011RMANGJD/grafik.png for a pretty
+400% zoom visualising the differences near the edge.
 """
 
 import pyproj
@@ -13,6 +50,16 @@ def calc_heading_distance_accurate(lat1, lon1, lat2, lon2):
     """Calculating heading and distance, accurately
 
     Uses pyproj, assumes WGS84
+
+    Args:
+        lat1 (float)
+        lon1 (float)
+        lat2 (float)
+        lon2 (float)
+
+    Returns:
+        heading (degrees)
+        distance (metre)
     """
     geod = pyproj.geod.Geod(ellps="WGS84")
 

@@ -88,3 +88,18 @@ saotome:
   area_extent:
     lower_left_xy: [705505.3673684598, -11606.849730014801]
     upper_right_xy: [761962.8868997098, 56752.52526998521]
+
+ileeuropa_stere:
+  description: Île Europa, stereographic
+  projection:
+    proj: stere
+    lat_0: 45.0
+    lon_0: 10.0
+    lat_ts: 45.0
+    ellps: WGS84
+  shape:
+    width: 545
+    height: 418
+  area_extent:
+    lower_left_xy: [4531799.312680961, -8185434.974730016]
+    upper_right_xy: [4640747.06658721, -8101816.810667517]

@@ -25,16 +25,18 @@ def get_parser():
     parser.add_argument(
             "--composites", action="store", type=str,
             nargs="*",
+            default=[],
             help="Composites to generate")
 
     parser.add_argument(
             "--channels", action="store", type=str,
             nargs="*",
+            default=[],
             help="Channels to generate.  Should be FCI channel labels.")
 
     parser.add_argument(
             "-a", "--areas", action="store", type=str,
-            nargs="*",
+            nargs="+",
             help="Areas for which to generate those.")
 
     parser.add_argument(
@@ -45,6 +47,11 @@ def get_parser():
     parser.add_argument(
             "--coastline-dir", action="store", type=str,
             help="Path to directory with coastlines.")
+
+    parser.add_argument(
+            "--show-only-coastlines", action="store_true",
+            help="Prepare three blank images showing only coastlines.  "
+                 "Backgrounds will be white, black, and transparent.")
 
     return parser
 
@@ -64,5 +71,6 @@ def main():
             p.areas,
             p.outdir,
             p.filename_pattern,
-            p.coastline_dir)
+            p.coastline_dir,
+            p.show_only_coastlines)
     print("Files written:", fn)

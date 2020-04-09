@@ -21,10 +21,13 @@ def test_unpack_and_show_testdata(ga, sS, tfs, tmp_path, areas):
 @patch("glob.glob", autospec=True)
 def test_show_testdata(gl, sc, areas):
     import fcitools.vis
+    from satpy import DatasetID
+    comps = ["mars_rgb", "venus_rgb"]
+    chans = ["vis_00", "ir_00", "uv_00"]
+    D = {DatasetID(k): None for k in comps+chans}
+    sc.return_value.resample.return_value.keys.side_effect = D.keys
     L = fcitools.vis.show_testdata_from_dir(
-            "/tmp/pinguin/telly", ["mars_rgb", "venus_rgb"],
-            ["vis_00", "ir_00", "uv_00"],
-            areas,
+            "/tmp/pinguin/telly", comps, chans, areas,
             pathlib.Path("/out"), "{label:s}_{area:s}_{dataset:s}.tiff",
             path_to_coastlines="/coast", label="fish")
     assert sc.return_value.resample.return_value.save_dataset.call_count == 5

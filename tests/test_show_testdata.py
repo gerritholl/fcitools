@@ -9,7 +9,7 @@ from unittest.mock import patch
 def test_get_parser(ap):
     import fcitools.processing.show_testdata
     fcitools.processing.show_testdata.parse_cmdline()
-    assert ap.return_value.add_argument.call_count == 7
+    assert ap.return_value.add_argument.call_count == 8
 
 
 @patch("satpy.Scene", autospec=True)

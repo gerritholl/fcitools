@@ -14,7 +14,7 @@ Example code of how to use this::
     import fcitools.geo
     srcdir = "/media/nas/x21308/2020_04_MTG_unofficial_Testdata/20130804_RC72/"
     fciscene = Scene(sensor="fci", reader=["fci_l1c_fdhsi"],
-		     filenames=glob(srcdir + "/*BODY*.nc"))
+                     filenames=glob(srcdir + "/*BODY*.nc"))
     fciscene.load(["vis_09"])
     rgb = fcitools.geo.compare_geolocation(fciscene, "vis_09")
 
@@ -23,8 +23,10 @@ Example code of how to use this::
     (f, ax) = fcitools.geo.plot_legend(fcitools.geo.get_legend())
     f.savefig("/tmp/legend.png")
 
-    (pyt_lat, pyt_lon, eum_lat, eum_lon) = fcitools.geo.get_lat_lon_pair(fciscene, "vis_09")
-    (heading, distance) = fcitools.geo.calc_heading_distance_accurate(eum_lat, eum_lon, pyt_lat, pyt_lon)
+    (pyt_lat, pyt_lon, eum_lat, eum_lon) = fcitools.geo.get_lat_lon_pair(
+            fciscene, "vis_09")
+    (heading, distance) = fcitools.geo.calc_heading_distance_accurate(
+            eum_lat, eum_lon, pyt_lat, pyt_lon)
     distcomp = distance.compute()
     print(np.median(ma.masked_invalid(distcomp)))
 
@@ -188,7 +190,7 @@ def plot_legend(rgb,
 
 
 def get_lat_lon_pair(sc, chan, _x_start=1, _y_start=1,
-        _x_end=None, _y_end=None):
+                     _x_end=None, _y_end=None):
     """Get a pair of lat/lons
 
     Args:
@@ -239,8 +241,9 @@ def compare_geolocation(sc, chan, _x_start=1, _y_start=1,
         corresponds to the magnitude.  For a legend, call :func:`get_legend`.
     """
 
-    (pyt_lat, pyt_lon, eum_lat, eum_lon) = get_lat_lon_pair(sc, chan,
-            _x_start=_x_start, _y_start=_y_start, _x_end=_x_end, _y_end=_y_end)
+    (pyt_lat, pyt_lon, eum_lat, eum_lon) = get_lat_lon_pair(
+            sc, chan, _x_start=_x_start, _y_start=_y_start,
+            _x_end=_x_end, _y_end=_y_end)
 
     (heading, distance) = calc_heading_distance_accurate(
             eum_lat, eum_lon, pyt_lat, pyt_lon)

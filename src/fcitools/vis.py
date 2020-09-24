@@ -143,7 +143,7 @@ def show_testdata_from_dir(
         for dn in ls.keys():
             fn = pathlib.Path(d_out) / fn_out.format(
                     area=getattr(la, "area_id", "native"),
-                    dataset=dn.name,
+                    dataset=dn["name"],
                     label=label)
             ls.save_dataset(
                     dn,

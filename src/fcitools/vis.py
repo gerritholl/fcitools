@@ -1,10 +1,9 @@
 """Routines related to visualisation
 """
 
-import numpy
-import satpy
 import pathlib
-import xarray
+import sattools.vis
+import sattools.ptc
 from . import ioutil
 
 
@@ -55,20 +54,12 @@ def unpack_and_show_testdata(
     """
 
     paths = ioutil.unpack_tgz(path_to_tgz)
-    areas = ioutil.get_all_areas()
+    areas = sattools.ptc.get_all_areas()
     p = pathlib.Path(path_to_tgz).stem.split(".")[0]  # true stem
 
-    names = show_testdata_from_dir(
-            {str(p) for p in paths},
-            composites,
-            channels,
-            [areas.get(nm) for nm in regions],
-            d_out,
-            fn_out,
-            path_to_coastlines=path_to_coastlines,
-            label=p,
-            show_only_coastlines=show_only_coastlines)
-    return names
+    return sattools.vis.show(
+        paths, composites, channels, areas, d_out, fn_out, "fci_l1c_fdhsi",
+        path_to_coastlines, label=p, show_only_coastlines=show_only_coastlines)
 
 
 def show_testdata_from_dir(
@@ -122,32 +113,7 @@ def show_testdata_from_dir(
     Returns:
         List of filenames written
     """
-    L = []
-    sc = satpy.Scene(
-            sensor="fci",
-            filenames=files,
-            reader=["fci_l1c_fdhsi"])
-    if path_to_coastlines is not None:
-        overlay = {"coast_dir": path_to_coastlines, "color": "red"}
-    else:
-        overlay = None
-    sc.load(channels)
-    sc.load(composites)
-    if show_only_coastlines:
-        sc["black"] = xarray.zeros_like(sc[(channels+composites).pop(0)])
-        sc["white"] = xarray.ones_like(sc[(channels+composites).pop(0)])
-        sc["nans"] = xarray.full_like(sc[(channels+composites).pop(0)],
-                                      numpy.nan)
-    for la in regions:
-        ls = sc.resample(la)
-        for dn in ls.keys():
-            fn = pathlib.Path(d_out) / fn_out.format(
-                    area=getattr(la, "area_id", "native"),
-                    dataset=dn["name"],
-                    label=label)
-            ls.save_dataset(
-                    dn,
-                    filename=str(fn),
-                    overlay=overlay)
-            L.append(fn)
-    return L
+    return sattools.vis.show(
+        files, composites, channels, regions, d_out, fn_out, "fci_l1c_nc",
+        path_to_coastlines, label=label,
+        show_only_coastlines=show_only_coastlines)

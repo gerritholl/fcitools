@@ -27,8 +27,7 @@ def test_main(fpsp, sS, tfs, tmp_path):
     os.environ["XDG_CACHE_HOME"] = str(tmp_path)
     fcitools.processing.show_testdata.main()
     sS.assert_called_once_with(
-        sensor="fci",
-        filenames={str(tmp_path / "fcitools" / "file_tar_gz"
+        filenames=[str(tmp_path / "fcitools" / "file_tar_gz"
                        / "subdir" / f"file{i:d}.dat")
-                   for i in (1, 2, 0)},
-        reader=["fci_l1c_fdhsi"])
+                   for i in (1, 2, 0)],
+        reader="fci_l1c_fdhsi")

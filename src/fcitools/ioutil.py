@@ -50,10 +50,3 @@ def unpack_tgz(path_to_tgz):
         raise ValueError(f"Found {len(subdirs):d} files, expected "
                          "exactly one")
     return subdirs[0].iterdir()
-
-
-def get_all_areas():
-    """Get a dictionary with all findable areas
-    """
-
-    return sattools.ptc.get_all_areas()

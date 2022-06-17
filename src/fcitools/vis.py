@@ -6,6 +6,7 @@ import satpy
 import pathlib
 import xarray
 import sattools.vis
+import sattools.ptc
 from . import ioutil
 
 
@@ -56,7 +57,7 @@ def unpack_and_show_testdata(
     """
 
     paths = ioutil.unpack_tgz(path_to_tgz)
-    areas = ioutil.get_all_areas()
+    areas = sattools.ptc.get_all_areas()
     p = pathlib.Path(path_to_tgz).stem.split(".")[0]  # true stem
 
     return sattools.vis.show(

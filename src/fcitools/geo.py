@@ -40,15 +40,11 @@ https://pytroll.slack.com/files/UGU1HTMUG/F011RMANGJD/grafik.png for a pretty
 400% zoom visualising the differences near the edge.
 """
 
-import pyproj
-import numpy
-import matplotlib.colors
 import dask.array
-import PIL
-import matplotlib.pyplot
 
 from sattools.geo import (calc_heading_distance_accurate,
-        calc_rgb_from_heading_distance, get_legend)
+                          calc_rgb_from_heading_distance)
+
 
 def get_lat_lon_pair(sc, chan, _x_start=1, _y_start=1,
                      _x_end=None, _y_end=None):

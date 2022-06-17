@@ -1,10 +1,7 @@
 """Routines related to visualisation
 """
 
-import numpy
-import satpy
 import pathlib
-import xarray
 import sattools.vis
 import sattools.ptc
 from . import ioutil
@@ -118,4 +115,5 @@ def show_testdata_from_dir(
     """
     return sattools.vis.show(
         files, composites, channels, regions, d_out, fn_out, "fci_l1c_nc",
-        path_to_coastlines, label=label, show_only_coastlines=show_only_coastlines)
+        path_to_coastlines, label=label,
+        show_only_coastlines=show_only_coastlines)

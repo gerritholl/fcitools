@@ -2,7 +2,8 @@
 """
 
 import pathlib
-from unittest.mock import patch, call
+
+from unittest.mock import patch
 
 
 @patch("satpy.Scene", autospec=True)

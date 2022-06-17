@@ -3,7 +3,6 @@ import pathlib
 import pytest
 import types
 import os
-from unittest.mock import patch
 
 
 def test_unpack_tgz(tmp_path, tfs, caplog):

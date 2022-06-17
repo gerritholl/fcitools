@@ -117,5 +117,5 @@ def show_testdata_from_dir(
         List of filenames written
     """
     return sattools.vis.show(
-        paths, composites, channels, areas, d_out, fn_out, "fci_l1c_nc",
-        path_to_coastlines, label=p, show_only_coastlines=show_only_coastlines)
+        files, composites, channels, regions, d_out, fn_out, "fci_l1c_nc",
+        path_to_coastlines, label=label, show_only_coastlines=show_only_coastlines)

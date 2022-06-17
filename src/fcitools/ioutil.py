@@ -56,4 +56,4 @@ def get_all_areas():
     """Get a dictionary with all findable areas
     """
 
-    return sattools.ptc.get_all_areas(["satpy", "fcitools"])
+    return sattools.ptc.get_all_areas()
